@@ -49,10 +49,7 @@ def trainNB0(trainMatrix,trainCategory):
 def classifyNB(vec2Classify, p0Vec, p1Vec, pClass1):
     p1 = sum(vec2Classify * p1Vec) + log(pClass1)    #element-wise mult
     p0 = sum(vec2Classify * p0Vec) + log(1.0 - pClass1)
-    if p1 > p0:
-        return 1
-    else: 
-        return 0
+    return 1 if p1 > p0 else 0
     
 def bagOfWords2VecMN(vocabList, inputSet):
     returnVec = [0]*len(vocabList)
@@ -113,15 +110,15 @@ def spamTest():
 
 def calcMostFreq(vocabList,fullText):
     import operator
-    freqDict = {}
-    for token in vocabList:
-        freqDict[token]=fullText.count(token)
-    sortedFreq = sorted(freqDict.iteritems(), key=operator.itemgetter(1), reverse=True) 
+    freqDict = {token: fullText.count(token) for token in vocabList}
+    sortedFreq = sorted(freqDict.iteritems(), key=operator.itemgetter(1), reverse=True)
     return sortedFreq[:30]       
 
 def localWords(feed1,feed0):
     import feedparser
-    docList=[]; classList = []; fullText =[]
+    docList=[]
+    classList = []
+    fullText =[]
     minLen = min(len(feed1['entries']),len(feed0['entries']))
     for i in range(minLen):
         wordList = textParse(feed1['entries'][i]['summary'])
@@ -136,12 +133,14 @@ def localWords(feed1,feed0):
     top30Words = calcMostFreq(vocabList,fullText)   #remove top 30 words
     for pairW in top30Words:
         if pairW[0] in vocabList: vocabList.remove(pairW[0])
-    trainingSet = range(2*minLen); testSet=[]           #create test set
-    for i in range(20):
+    trainingSet = range(2*minLen)
+    testSet=[]           #create test set
+    for _ in range(20):
         randIndex = int(random.uniform(0,len(trainingSet)))
         testSet.append(trainingSet[randIndex])
-        del(trainingSet[randIndex])  
-    trainMat=[]; trainClasses = []
+        del(trainingSet[randIndex])
+    trainMat=[]
+    trainClasses = []
     for docIndex in trainingSet:#train the classifier (get probs) trainNB0
         trainMat.append(bagOfWords2VecMN(vocabList, docList[docIndex]))
         trainClasses.append(classList[docIndex])
@@ -151,7 +150,7 @@ def localWords(feed1,feed0):
         wordVector = bagOfWords2VecMN(vocabList, docList[docIndex])
         if classifyNB(array(wordVector),p0V,p1V,pSpam) != classList[docIndex]:
             errorCount += 1
-    print 'the error rate is: ',float(errorCount)/len(testSet)
+    import feedparser
     return vocabList,p0V,p1V
 
 def getTopWords(ny,sf):

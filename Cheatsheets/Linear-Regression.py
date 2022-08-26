@@ -7,7 +7,7 @@ def step_gradient(b_current, m_current, points, learning_rate):
     m_gradient = 0
     n = float(len(points))
 
-    for i in range(0, len(points)):
+    for i in range(len(points)):
         x = points[i][0]
         y = points[i][1]
         b_gradient += -(2/n) * (y - (m_current * x + b_current))
@@ -22,7 +22,7 @@ def gradient_descent_runner(points, starting_b, starting_m, learning_rate, epoch
     b = starting_b
     m = starting_m
 
-    for i in range(epochs):
+    for _ in range(epochs):
         b, m = step_gradient(b, m, points, learning_rate)
     return [b, m]
 

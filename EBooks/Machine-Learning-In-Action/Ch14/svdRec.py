@@ -32,8 +32,7 @@ def ecludSim(inA,inB):
     return 1.0/(1.0 + la.norm(inA - inB))
 
 def pearsSim(inA,inB):
-    if len(inA) < 3 : return 1.0
-    return 0.5+0.5*corrcoef(inA, inB, rowvar = 0)[0][1]
+    return 1.0 if len(inA) < 3 else 0.5+0.5*corrcoef(inA, inB, rowvar = 0)[0][1]
 
 def cosSim(inA,inB):
     num = float(inA.T*inB)
@@ -93,18 +92,16 @@ def printMat(inMat, thresh=0.8):
 
 def imgCompress(numSV=3, thresh=0.8):
     myl = []
-    for line in open('0_5.txt').readlines():
-        newRow = []
-        for i in range(32):
-            newRow.append(int(line[i]))
+    for line in open('0_5.txt'):
+        newRow = [int(line[i]) for i in range(32)]
         myl.append(newRow)
     myMat = mat(myl)
-    print "****original matrix******"
+    myl = []
     printMat(myMat, thresh)
     U,Sigma,VT = la.svd(myMat)
     SigRecon = mat(zeros((numSV, numSV)))
     for k in range(numSV):#construct diagonal matrix from vector
         SigRecon[k,k] = Sigma[k]
     reconMat = U[:,:numSV]*SigRecon*VT[:numSV,:]
-    print "****reconstructed matrix using %d singular values******" % numSV
+    myl = []
     printMat(reconMat, thresh)

@@ -3,39 +3,42 @@ Created on Jun 1, 2011
 
 @author: Peter
 '''
+
 from numpy import *
 import matplotlib
 import matplotlib.pyplot as plt
 import pca
 
 n = 1000 #number of points to create
-xcord0 = []; ycord0 = []
-xcord1 = []; ycord1 = []
-xcord2 = []; ycord2 = []
+xcord0 = []
+ycord0 = []
+xcord1 = []
+ycord1 = []
+xcord2 = []
+ycord2 = []
 markers =[]
 colors =[]
-fw = open('testSet3.txt','w')
-for i in range(n):
-    groupNum = int(3*random.uniform())
-    [r0,r1] = random.standard_normal(2)
-    if groupNum == 0:
-        x = r0 + 16.0
-        y = 1.0*r1 + x
-        xcord0.append(x)
-        ycord0.append(y)
-    elif groupNum == 1:
-        x = r0 + 8.0
-        y = 1.0*r1 + x
-        xcord1.append(x)
-        ycord1.append(y)
-    elif groupNum == 2:
-        x = r0 + 0.0
-        y = 1.0*r1 + x
-        xcord2.append(x)
-        ycord2.append(y)
-    fw.write("%f\t%f\t%d\n" % (x, y, groupNum))
+with open('testSet3.txt','w') as fw:
+    for _ in range(n):
+        groupNum = int(3*random.uniform())
+        [r0,r1] = random.standard_normal(2)
+        if groupNum == 0:
+            x = r0 + 16.0
+            y = 1.0*r1 + x
+            xcord0.append(x)
+            ycord0.append(y)
+        elif groupNum == 1:
+            x = r0 + 8.0
+            y = 1.0*r1 + x
+            xcord1.append(x)
+            ycord1.append(y)
+        elif groupNum == 2:
+            x = r0 + 0.0
+            y = 1.0*r1 + x
+            xcord2.append(x)
+            ycord2.append(y)
+        fw.write("%f\t%f\t%d\n" % (x, y, groupNum))
 
-fw.close()
 fig = plt.figure()
 ax = fig.add_subplot(211)
 ax.scatter(xcord0,ycord0, marker='^', s=90)

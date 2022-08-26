@@ -14,15 +14,14 @@ def loadSimpData():
     classLabels = [1.0, 1.0, -1.0, -1.0, 1.0]
     return datMat,classLabels
 
-def loadDataSet(fileName):      #general function to parse tab -delimited floats
+def loadDataSet(fileName):  #general function to parse tab -delimited floats
     numFeat = len(open(fileName).readline().split('\t')) #get number of fields 
-    dataMat = []; labelMat = []
+    dataMat = []
+    labelMat = []
     fr = open(fileName)
-    for line in fr.readlines():
-        lineArr =[]
+    for line in fr:
         curLine = line.strip().split('\t')
-        for i in range(numFeat-1):
-            lineArr.append(float(curLine[i]))
+        lineArr = [float(curLine[i]) for i in range(numFeat-1)]
         dataMat.append(lineArr)
         labelMat.append(float(curLine[-1]))
     return dataMat,labelMat
@@ -66,11 +65,11 @@ def adaBoostTrainDS(dataArr,classLabels,numIt=40):
     m = shape(dataArr)[0]
     D = mat(ones((m,1))/m)   #init D to all equal
     aggClassEst = mat(zeros((m,1)))
-    for i in range(numIt):
+    for _ in range(numIt):
         bestStump,error,classEst = buildStump(dataArr,classLabels,D)#build Stump
         #print "D:",D.T
         alpha = float(0.5*log((1.0-error)/max(error,1e-16)))#calc alpha, throw in max(error,eps) to account for error=0
-        bestStump['alpha'] = alpha  
+        bestStump['alpha'] = alpha
         weakClassArr.append(bestStump)                  #store Stump Params in Array
         #print "classEst: ",classEst.T
         expon = multiply(-1*alpha*mat(classLabels).T,classEst) #exponent for D calc, getting messy
@@ -81,7 +80,7 @@ def adaBoostTrainDS(dataArr,classLabels,numIt=40):
         #print "aggClassEst: ",aggClassEst.T
         aggErrors = multiply(sign(aggClassEst) != mat(classLabels).T,ones((m,1)))
         errorRate = aggErrors.sum()/m
-        print "total error: ",errorRate
+        bestStump,error,classEst = buildStump(dataArr,classLabels,D)#build Stump
         if errorRate == 0.0: break
     return weakClassArr
 

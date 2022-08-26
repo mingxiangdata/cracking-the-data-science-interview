@@ -24,11 +24,7 @@ for instance in mapperOut:
     cumN += nj
     cumVal += nj*float(instance[1])
     cumSumSq += nj*float(instance[2])
-    
+
 #calculate means
 mean = cumVal/cumN
 meanSq = cumSumSq/cumN
-
-#output size, mean, mean(square values)
-print "%d\t%f\t%f" % (cumN, mean, meanSq)
-print >> sys.stderr, "report: still alive"

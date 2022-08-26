@@ -12,7 +12,7 @@ def reDraw(tolS,tolN):
     reDraw.f.clf()        # clear the figure
     reDraw.a = reDraw.f.add_subplot(111)
     if chkBtnVar.get():
-        if tolN < 2: tolN = 2
+        tolN = max(tolN, 2)
         myTree=regTrees.createTree(reDraw.rawDat, regTrees.modelLeaf,\
                                    regTrees.modelErr, (tolS,tolN))
         yHat = regTrees.createForeCast(myTree, reDraw.testDat, \

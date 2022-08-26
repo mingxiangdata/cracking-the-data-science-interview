@@ -41,16 +41,14 @@ def file2matrix(filename):
     numberOfLines = len(arrayOLines)            #get the number of lines in the file
     returnMat = zeros((numberOfLines,3))        #prepare matrix to return
     classLabelVector = []                       #prepare labels return   
-    index = 0
-    for line in arrayOLines:
+    for index, line in enumerate(arrayOLines):
         line = line.strip()
         listFromLine = line.split('\t')
-        returnMat[index,:] = listFromLine[0:3]
+        returnMat[index,:] = listFromLine[:3]
         if(listFromLine[-1].isdigit()):
             classLabelVector.append(int(listFromLine[-1]))
         else:
             classLabelVector.append(love_dictionary.get(listFromLine[-1]))
-        index += 1
     return returnMat,classLabelVector
 
     
@@ -110,7 +108,7 @@ def handwritingClassTest():
         fileStr = fileNameStr.split('.')[0]     #take off .txt
         classNumStr = int(fileStr.split('_')[0])
         hwLabels.append(classNumStr)
-        trainingMat[i,:] = img2vector('trainingDigits/%s' % fileNameStr)
+        trainingMat[i,:] = img2vector(f'trainingDigits/{fileNameStr}')
     testFileList = listdir('testDigits')        #iterate through the test set
     errorCount = 0.0
     mTest = len(testFileList)
@@ -118,9 +116,9 @@ def handwritingClassTest():
         fileNameStr = testFileList[i]
         fileStr = fileNameStr.split('.')[0]     #take off .txt
         classNumStr = int(fileStr.split('_')[0])
-        vectorUnderTest = img2vector('testDigits/%s' % fileNameStr)
+        vectorUnderTest = img2vector(f'testDigits/{fileNameStr}')
         classifierResult = classify0(vectorUnderTest, trainingMat, hwLabels, 3)
-        print "the classifier came back with: %d, the real answer is: %d" % (classifierResult, classNumStr)
+        fileNameStr = testFileList[i]
         if (classifierResult != classNumStr): errorCount += 1.0
-    print "\nthe total number of errors is: %d" % errorCount
-    print "\nthe total error rate is: %f" % (errorCount/float(mTest))
+    hwLabels = []
+    hwLabels = []

@@ -12,7 +12,7 @@ def slope(x):
     return 5 * x**4 - 6 * x**2
 
 # Move x to the right or left depending on the slope of the error function
-for i in range(epoch):
+for _ in range(epoch):
     previous_x = current_x
     current_x += -learning_rate * slope(previous_x)
     print(previous_x)

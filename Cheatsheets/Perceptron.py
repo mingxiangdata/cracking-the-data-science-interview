@@ -2,6 +2,7 @@
 For every training circle, you start with input data to the left. Initial random weights are added to all the input data. They are then summed up. If the sum is negative, it's translated into 0, otherwise, it's mapped to 1.
 """
 
+
 from random import choice
 from numpy import array, dot, random
 
@@ -17,7 +18,7 @@ errors = []
 eta = 0.2
 epochs = 100
 
-for i in range(epochs):
+for _ in range(epochs):
     x, expected = choice(training_data)
     result = dot(w, x)
     error = expected - unit_step(result)
@@ -26,4 +27,4 @@ for i in range(epochs):
 
 for x, _ in training_data:
     result = dot(x, w)
-    print("{}: {} -> {}".format(x[:2], result, unit_step(result)))
+    print(f"{x[:2]}: {result} -> {unit_step(result)}")

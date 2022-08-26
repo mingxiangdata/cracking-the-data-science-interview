@@ -5,10 +5,10 @@ Tree-Based Regression Methods
 '''
 from numpy import *
 
-def loadDataSet(fileName):      #general function to parse tab -delimited floats
+def loadDataSet(fileName):  #general function to parse tab -delimited floats
     dataMat = []                #assume last column is target value
     fr = open(fileName)
-    for line in fr.readlines():
+    for line in fr:
         curLine = line.strip().split('\t')
         fltLine = map(float,curLine) #map all elements to float()
         dataMat.append(fltLine)
@@ -74,10 +74,8 @@ def chooseBestSplit(dataSet, leafType=regLeaf, errType=regErr, ops=(1,4)):
 
 def createTree(dataSet, leafType=regLeaf, errType=regErr, ops=(1,4)):#assume dataSet is NumPy Mat so we can array filtering
     feat, val = chooseBestSplit(dataSet, leafType, errType, ops)#choose the best split
-    if feat == None: return val #if the splitting hit a stop condition return val
-    retTree = {}
-    retTree['spInd'] = feat
-    retTree['spVal'] = val
+    if feat is None: return val #if the splitting hit a stop condition return val
+    retTree = {'spInd': feat, 'spVal': val}
     lSet, rSet = binSplitDataSet(dataSet, feat, val)
     retTree['left'] = createTree(lSet, leafType, errType, ops)
     retTree['right'] = createTree(rSet, leafType, errType, ops)
@@ -122,11 +120,14 @@ def modelTreeEval(model, inDat):
 def treeForeCast(tree, inData, modelEval=regTreeEval):
     if not isTree(tree): return modelEval(tree, inData)
     if inData[tree['spInd']] > tree['spVal']:
-        if isTree(tree['left']): return treeForeCast(tree['left'], inData, modelEval)
-        else: return modelEval(tree['left'], inData)
-    else:
-        if isTree(tree['right']): return treeForeCast(tree['right'], inData, modelEval)
-        else: return modelEval(tree['right'], inData)
+        return (
+            treeForeCast(tree['left'], inData, modelEval)
+            if isTree(tree['left'])
+            else modelEval(tree['left'], inData)
+        )
+
+    if isTree(tree['right']): return treeForeCast(tree['right'], inData, modelEval)
+    else: return modelEval(tree['right'], inData)
         
 def createForeCast(tree, testData, modelEval=regTreeEval):
     m=len(testData)

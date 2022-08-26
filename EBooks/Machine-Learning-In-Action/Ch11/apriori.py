@@ -12,9 +12,9 @@ def createC1(dataSet):
     C1 = []
     for transaction in dataSet:
         for item in transaction:
-            if not [item] in C1:
+            if [item] not in C1:
                 C1.append([item])
-                
+
     C1.sort()
     return map(frozenset, C1)#use frozen set so we
                             #can use it as a key in a dict    

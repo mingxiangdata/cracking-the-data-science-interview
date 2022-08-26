@@ -9,7 +9,7 @@ def compute_error(b, m, coordinates):
     coordinates are the locations
     """
     totalError = 0
-    for i in range(0, len(coordinates)):
+    for i in range(len(coordinates)):
         x = coordinates[i][0]
         y = coordinates[i][1]
         totalError += (y - (m * x + b)) ** 2

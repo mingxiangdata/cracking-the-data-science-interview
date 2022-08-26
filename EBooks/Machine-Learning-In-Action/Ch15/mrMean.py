@@ -13,11 +13,10 @@ class MRmean(MRJob):
         self.inSqSum = 0
     
     def map(self, key, val): #needs exactly 2 arguments
-        if False: yield
         inVal = float(val)
         self.inCount += 1
         self.inSum += inVal
-        self.inSqSum += inVal*inVal
+        self.inSqSum += inVal**2
         
     def map_final(self):
         mn = self.inSum/self.inCount
