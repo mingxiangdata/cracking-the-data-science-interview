@@ -28,13 +28,12 @@ syn_0 = 2 * np.random.random((3, 4)) - 1
 syn_1 = 2 * np.random.random((4, 1)) - 1
 
 def sigmoid(x):
-    output = 1 / (1 + np.exp(-x))
-    return output
+    return 1 / (1 + np.exp(-x))
 
 def sigmoid_output_to_derivative(output):
     return output * (1 - output)
 
-for iteration in range(25000):
+for _ in range(25000):
     # Forward Pass
     layer_1 = sigmoid(np.dot(x_XOR, syn_0))
     layer_2 = sigmoid(np.dot(layer_1, syn_1))

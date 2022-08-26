@@ -87,16 +87,16 @@ def classify(inputTree,featLabels,testVec):
     featIndex = featLabels.index(firstStr)
     key = testVec[featIndex]
     valueOfFeat = secondDict[key]
-    if isinstance(valueOfFeat, dict): 
-        classLabel = classify(valueOfFeat, featLabels, testVec)
-    else: classLabel = valueOfFeat
-    return classLabel
+    return (
+        classify(valueOfFeat, featLabels, testVec)
+        if isinstance(valueOfFeat, dict)
+        else valueOfFeat
+    )
 
 def storeTree(inputTree,filename):
     import pickle
-    fw = open(filename,'w')
-    pickle.dump(inputTree,fw)
-    fw.close()
+    with open(filename,'w') as fw:
+        pickle.dump(inputTree,fw)
     
 def grabTree(filename):
     import pickle

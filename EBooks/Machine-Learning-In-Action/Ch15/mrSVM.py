@@ -32,8 +32,6 @@ class MRsvm(MRJob):
             help='k: number of data points in a batch')
     
     def map(self, mapperId, inVals): #needs exactly 2 arguments
-        #input: nodeId, ('w', w-vector) OR nodeId, ('x', int)
-        if False: yield
         if inVals[0]=='w':                  #accumulate W-vector
             self.w = inVals[1]
         elif inVals[0]=='x':
@@ -55,9 +53,11 @@ class MRsvm(MRJob):
         for valArr in packedVals: #get values from streamed inputs
             if valArr[0]=='u':  self.dataList.append(valArr[1])
             elif valArr[0]=='w': self.w = valArr[1]
-            elif valArr[0]=='t':  self.t = valArr[1] 
-        labels = self.data[:,-1]; X=self.data[:,0:-1]
-        wMat = mat(self.w);   wDelta = mat(zeros(len(self.w)))
+            elif valArr[0]=='t':  self.t = valArr[1]
+        labels = self.data[:,-1]
+        X=self.data[:,0:-1]
+        wMat = mat(self.w)
+        wDelta = mat(zeros(len(self.w)))
         for index in self.dataList:
             wDelta += float(labels[index])*X[index,:] #wDelta += label*dataSet
         eta = 1.0/(2.0*self.t)       #calc new: eta
@@ -67,7 +67,7 @@ class MRsvm(MRJob):
             yield (mapperNum, ['w', wMat.tolist()[0] ]) #emit w
             if self.t < self.options.iterations:
                 yield (mapperNum, ['t', self.t+1])#increment T
-                for j in range(self.k/self.numMappers):#emit random ints for mappers iid
+                for _ in range(self.k/self.numMappers):
                     yield (mapperNum, ['x', random.randint(shape(self.data)[0]) ])
         
     def steps(self):

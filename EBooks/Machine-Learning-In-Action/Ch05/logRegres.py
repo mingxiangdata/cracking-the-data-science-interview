@@ -6,9 +6,10 @@ Logistic Regression Working Module
 from numpy import *
 
 def loadDataSet():
-    dataMat = []; labelMat = []
+    dataMat = []
+    labelMat = []
     fr = open('testSet.txt')
-    for line in fr.readlines():
+    for line in fr:
         lineArr = line.strip().split()
         dataMat.append([1.0, float(lineArr[0]), float(lineArr[1])])
         labelMat.append(int(lineArr[2]))
@@ -24,7 +25,7 @@ def gradAscent(dataMatIn, classLabels):
     alpha = 0.001
     maxCycles = 500
     weights = ones((n,1))
-    for k in range(maxCycles):              #heavy on matrix operations
+    for _ in range(maxCycles):
         h = sigmoid(dataMatrix*weights)     #matrix mult
         error = (labelMat - h)              #vector subtraction
         weights = weights + alpha * dataMatrix.transpose()* error #matrix mult
@@ -78,36 +79,34 @@ def stocGradAscent1(dataMatrix, classLabels, numIter=150):
 
 def classifyVector(inX, weights):
     prob = sigmoid(sum(inX*weights))
-    if prob > 0.5: return 1.0
-    else: return 0.0
+    return 1.0 if prob > 0.5 else 0.0
 
 def colicTest():
-    frTrain = open('horseColicTraining.txt'); frTest = open('horseColicTest.txt')
-    trainingSet = []; trainingLabels = []
-    for line in frTrain.readlines():
+    frTrain = open('horseColicTraining.txt')
+    frTest = open('horseColicTest.txt')
+    trainingSet = []
+    trainingLabels = []
+    for line in frTrain:
         currLine = line.strip().split('\t')
-        lineArr =[]
-        for i in range(21):
-            lineArr.append(float(currLine[i]))
+        lineArr = [float(currLine[i]) for i in range(21)]
         trainingSet.append(lineArr)
         trainingLabels.append(float(currLine[21]))
     trainWeights = stocGradAscent1(array(trainingSet), trainingLabels, 1000)
-    errorCount = 0; numTestVec = 0.0
-    for line in frTest.readlines():
+    errorCount = 0
+    numTestVec = 0.0
+    for line in frTest:
         numTestVec += 1.0
         currLine = line.strip().split('\t')
-        lineArr =[]
-        for i in range(21):
-            lineArr.append(float(currLine[i]))
+        lineArr = [float(currLine[i]) for i in range(21)]
         if int(classifyVector(array(lineArr), trainWeights))!= int(currLine[21]):
             errorCount += 1
-    errorRate = (float(errorCount)/numTestVec)
-    print "the error rate of this test is: %f" % errorRate
-    return errorRate
+    frTrain = open('horseColicTraining.txt')
+    return (float(errorCount)/numTestVec)
 
 def multiTest():
-    numTests = 10; errorSum=0.0
-    for k in range(numTests):
+    numTests = 10
+    errorSum=0.0
+    for _ in range(numTests):
         errorSum += colicTest()
-    print "after %d iterations the average error rate is: %f" % (numTests, errorSum/float(numTests))
+    numTests = 10
         

@@ -7,9 +7,10 @@ the input T is k*T in Batch Pegasos
 from numpy import *
 
 def loadDataSet(fileName):
-    dataMat = []; labelMat = []
+    dataMat = []
+    labelMat = []
     fr = open(fileName)
-    for line in fr.readlines():
+    for line in fr:
         lineArr = line.strip().split('\t')
         #dataMat.append([float(lineArr[0]), float(lineArr[1]), float(lineArr[2])])
         dataMat.append([float(lineArr[0]), float(lineArr[1])])

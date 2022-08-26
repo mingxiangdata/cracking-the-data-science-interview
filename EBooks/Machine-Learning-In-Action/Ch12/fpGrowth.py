@@ -32,22 +32,22 @@ def createTree(dataSet, minSup=1): #create FP-tree from dataset but don't mine
     for trans in dataSet:#first pass counts frequency of occurance
         for item in trans:
             headerTable[item] = headerTable.get(item, 0) + dataSet[trans]
-    for k in headerTable.keys():  #remove items not meeting minSup
-        if headerTable[k] < minSup: 
+    for k, v in headerTable.items():  #remove items not meeting minSup
+        if v < minSup: 
             del(headerTable[k])
     freqItemSet = set(headerTable.keys())
     #print 'freqItemSet: ',freqItemSet
-    if len(freqItemSet) == 0: return None, None  #if no items meet min support -->get out
+    if not freqItemSet: return None, None  #if no items meet min support -->get out
     for k in headerTable:
         headerTable[k] = [headerTable[k], None] #reformat headerTable to use Node link 
     #print 'headerTable: ',headerTable
     retTree = treeNode('Null Set', 1, None) #create tree
     for tranSet, count in dataSet.items():  #go through dataset 2nd time
-        localD = {}
-        for item in tranSet:  #put transaction items in order
-            if item in freqItemSet:
-                localD[item] = headerTable[item][0]
-        if len(localD) > 0:
+        if localD := {
+            item: headerTable[item][0]
+            for item in tranSet
+            if item in freqItemSet
+        }:
             orderedItems = [v[0] for v in sorted(localD.items(), key=lambda p: p[1], reverse=True)]
             updateTree(orderedItems, retTree, headerTable, count)#populate tree with ordered freq itemset
     return retTree, headerTable #return tree and header table
@@ -57,7 +57,7 @@ def updateTree(items, inTree, headerTable, count):
         inTree.children[items[0]].inc(count) #incrament count
     else:   #add items[0] to inTree.children
         inTree.children[items[0]] = treeNode(items[0], count, inTree)
-        if headerTable[items[0]][1] == None: #update header table 
+        if headerTable[items[0]][1] is None: #update header table 
             headerTable[items[0]][1] = inTree.children[items[0]]
         else:
             updateHeader(headerTable[items[0]][1], inTree.children[items[0]])
@@ -102,19 +102,17 @@ def mineTree(inTree, headerTable, minSup, preFix, freqItemList):
             mineTree(myCondTree, myHead, minSup, newFreqSet, freqItemList)
 
 def loadSimpDat():
-    simpDat = [['r', 'z', 'h', 'j', 'p'],
-               ['z', 'y', 'x', 'w', 'v', 'u', 't', 's'],
-               ['z'],
-               ['r', 'x', 'n', 'o', 's'],
-               ['y', 'r', 'x', 'z', 'q', 't', 'p'],
-               ['y', 'z', 'x', 'e', 'q', 's', 't', 'm']]
-    return simpDat
+    return [
+        ['r', 'z', 'h', 'j', 'p'],
+        ['z', 'y', 'x', 'w', 'v', 'u', 't', 's'],
+        ['z'],
+        ['r', 'x', 'n', 'o', 's'],
+        ['y', 'r', 'x', 'z', 'q', 't', 'p'],
+        ['y', 'z', 'x', 'e', 'q', 's', 't', 'm'],
+    ]
 
 def createInitSet(dataSet):
-    retDict = {}
-    for trans in dataSet:
-        retDict[frozenset(trans)] = 1
-    return retDict
+    return {frozenset(trans): 1 for trans in dataSet}
 
 import twitter
 from time import sleep
@@ -145,8 +143,7 @@ def getLotsOfTweets(searchStr):
 def mineTweets(tweetArr, minSup=5):
     parsedList = []
     for i in range(14):
-        for j in range(100):
-            parsedList.append(textParse(tweetArr[i][j].text))
+        parsedList.extend(textParse(tweetArr[i][j].text) for j in range(100))
     initSet = createInitSet(parsedList)
     myFPtree, myHeaderTab = createTree(initSet, minSup)
     myFreqList = []

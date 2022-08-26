@@ -7,9 +7,10 @@ from numpy import *
 from time import sleep
 
 def loadDataSet(fileName):
-    dataMat = []; labelMat = []
+    dataMat = []
+    labelMat = []
     fr = open(fileName)
-    for line in fr.readlines():
+    for line in fr:
         lineArr = line.strip().split('\t')
         dataMat.append([float(lineArr[0]), float(lineArr[1])])
         labelMat.append(float(lineArr[2]))
@@ -17,7 +18,7 @@ def loadDataSet(fileName):
 
 def selectJrand(i,m):
     j=i #we want to select any J not equal to i
-    while (j==i):
+    while j == j:
         j = int(random.uniform(0,m))
     return j
 
@@ -98,8 +99,7 @@ class optStruct:
         
 def calcEk(oS, k):
     fXk = float(multiply(oS.alphas,oS.labelMat).T*oS.K[:,k] + oS.b)
-    Ek = fXk - float(oS.labelMat[k])
-    return Ek
+    return fXk - float(oS.labelMat[k])
         
 def selectJ(i, oS, Ei):         #this is the second choice -heurstic, and calcs Ej
     maxK = -1; maxDeltaE = 0; Ej = 0
@@ -226,7 +226,7 @@ def loadImages(dirName):
         classNumStr = int(fileStr.split('_')[0])
         if classNumStr == 9: hwLabels.append(-1)
         else: hwLabels.append(1)
-        trainingMat[i,:] = img2vector('%s/%s' % (dirName, fileNameStr))
+        trainingMat[i,:] = img2vector(f'{dirName}/{fileNameStr}')
     return trainingMat, hwLabels    
 
 def testDigits(kTup=('rbf', 10)):
@@ -272,8 +272,7 @@ class optStructK:
         
 def calcEkK(oS, k):
     fXk = float(multiply(oS.alphas,oS.labelMat).T*(oS.X*oS.X[k,:].T)) + oS.b
-    Ek = fXk - float(oS.labelMat[k])
-    return Ek
+    return fXk - float(oS.labelMat[k])
         
 def selectJK(i, oS, Ei):         #this is the second choice -heurstic, and calcs Ej
     maxK = -1; maxDeltaE = 0; Ej = 0

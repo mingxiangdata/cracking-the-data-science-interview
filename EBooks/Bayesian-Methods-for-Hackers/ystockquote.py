@@ -9,7 +9,7 @@ except ImportError:
 
 
 def _request(symbol, stat):
-    url = 'http://finance.yahoo.com/d/quotes.csv?s=%s&f=%s' % (symbol, stat)
+    url = f'http://finance.yahoo.com/d/quotes.csv?s={symbol}&f={stat}'
     req = Request(url)
     resp = urlopen(req)
     return str(resp.read().decode('utf-8').strip())
@@ -131,18 +131,21 @@ def get_historical_prices(symbol, start_date, end_date):
     Date format is 'YYYY-MM-DD'
     Returns a nested list (first item is list of column headers).
     """
-    params = urlencode({
-        's': symbol,
-        'a': int(start_date[5:7]) - 1,
-        'b': int(start_date[8:10]),
-        'c': int(start_date[0:4]),
-        'd': int(end_date[5:7]) - 1,
-        'e': int(end_date[8:10]),
-        'f': int(end_date[0:4]),
-        'g': 'd',
-        'ignore': '.csv',
-    })
-    url = 'http://ichart.yahoo.com/table.csv?%s' % params
+    params = urlencode(
+        {
+            's': symbol,
+            'a': int(start_date[5:7]) - 1,
+            'b': int(start_date[8:10]),
+            'c': int(start_date[:4]),
+            'd': int(end_date[5:7]) - 1,
+            'e': int(end_date[8:10]),
+            'f': int(end_date[:4]),
+            'g': 'd',
+            'ignore': '.csv',
+        }
+    )
+
+    url = f'http://ichart.yahoo.com/table.csv?{params}'
     req = Request(url)
     resp = urlopen(req)
     content = str(resp.read().decode('utf-8').strip())

@@ -5,15 +5,14 @@ Created on Jan 8, 2011
 '''
 from numpy import *
 
-def loadDataSet(fileName):      #general function to parse tab -delimited floats
+def loadDataSet(fileName):  #general function to parse tab -delimited floats
     numFeat = len(open(fileName).readline().split('\t')) - 1 #get number of fields 
-    dataMat = []; labelMat = []
+    dataMat = []
+    labelMat = []
     fr = open(fileName)
-    for line in fr.readlines():
-        lineArr =[]
+    for line in fr:
         curLine = line.strip().split('\t')
-        for i in range(numFeat):
-            lineArr.append(float(curLine[i]))
+        lineArr = [float(curLine[i]) for i in range(numFeat)]
         dataMat.append(lineArr)
         labelMat.append(float(curLine[-1]))
     return dataMat,labelMat
